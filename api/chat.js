@@ -100,7 +100,7 @@ If users ask about products, here are some you can mention:\n\n${products
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: "gpt-4.1-nano",
           messages,
         }),
       });
