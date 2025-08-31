@@ -106,6 +106,8 @@ If users ask about products, here are some you can mention:\n\n${products
       });
 
       const data = await response.json();
+      console.log("OpenAI API response:", data);  // 🔍 Debug
+      
       const reply = data.choices?.[0]?.message?.content || "Sorry, I don’t know.";
 
       return res.status(200).json({ reply });
