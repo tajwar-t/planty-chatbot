@@ -96,16 +96,17 @@ If users ask about products, here are some you can mention:\n\n${products
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: "Hello" }],
+          model: "gpt-3.5-turbo",
+          messages,
         }),
-        });
-        const data = await response.json();
-        console.log(data);
+      });
+
+      const data = await response.json();
+      console.log(data);
       
       const reply = data.choices?.[0]?.message?.content || "Sorry, I don’t know.";
 
