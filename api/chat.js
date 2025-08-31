@@ -106,7 +106,7 @@ If users ask about products, here are some you can mention:\n\n${products
       });
 
       const data = await response.json();
-      console.log(data);
+      //console.log(data);
       
       const reply = data.choices?.[0]?.message?.content || "Sorry, I don’t know.";
 
