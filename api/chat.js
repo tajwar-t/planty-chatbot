@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   async function fetchProductsFromShopify() {
     try {
       const response = await fetch(
-        `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-07/products.json?limit=50`,
+        `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-07/products.json?limit=500`,
         {
           headers: {
             "X-Shopify-Access-Token": process.env.SHOPIFY_ADMIN_API_KEY,
