@@ -2,7 +2,7 @@ export default async function handler(req, res) {
     // -------------------------------
     // Set CORS headers for every request
     // -------------------------------
-    const allowedOrigin = "https://vxswwt-uh.myshopify.com"; // Replace with your store URL
+    const allowedOrigin = "https://matihaat.com"; // Replace with your store URL
     res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
