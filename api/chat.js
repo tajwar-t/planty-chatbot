@@ -68,7 +68,7 @@ export default async function handler(req, res) {
       }
 
       if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_API_KEY) {
-        console.warn("⚠️ Shopify credentials not set – Planty will answer without product data");
+        console.warn("⚠️ Shopify credentials not set – Organic GPT will answer without product data");
       }
 
       // Fetch latest products
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
       const messages = [
         {
           role: "system",
-          content: `You are Planty, the AI assistant for Matihaat.com. 
+          content: `You are Organic GPT, the AI assistant for Matihaat.com. 
 Always be friendly, helpful, and conversational. 
 If users ask about products, here are some you can mention:\n\n${products
             .map((p) => `- ${p.title}: $${p.price} (View: ${p.url})`)
