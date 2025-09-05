@@ -1,27 +1,29 @@
-// pages/api/chat.js (Vercel serverless function)
+// pages/api/chat.js
 // Author: Tajwar
+
+import storeInfo from "./data/store-info.json";
 
 export default async function handler(req, res) {
   // -------------------------------
-  // Set CORS headers for every request
+  // Set CORS headers
   // -------------------------------
-  const allowedOrigin = "https://matihaat.com"; // Replace with your store URL
+  const allowedOrigin = "https://matihaat.com"; // Change to your live domain
   res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // Handle preflight OPTIONS request
+  // Preflight check
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  // Health check
+  // Health check endpoint
   if (req.method === "GET") {
     return res.status(200).json({ status: "Chat proxy running ✅" });
   }
 
   // -------------------------------
-  // Shopify product fetcher
+  // Fetch Products from Shopify
   // -------------------------------
   async function fetchProductsFromShopify() {
     try {
@@ -53,40 +55,60 @@ export default async function handler(req, res) {
   }
 
   // -------------------------------
-  // Handle POST chat request
+  // Handle POST Chat Request
   // -------------------------------
   if (req.method === "POST") {
     try {
       const { message, conversation = [] } = req.body;
 
+      // Validate message
       if (!message || message.trim() === "") {
         return res.status(400).json({ error: "Message is required" });
       }
 
+      // Check OpenAI key
       if (!process.env.OPENAI_API_KEY) {
         return res.status(500).json({ error: "OpenAI API key missing!" });
-      }
-
-      if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_API_KEY) {
-        console.warn("⚠️ Shopify credentials not set – Organic GPT will answer without product data");
       }
 
       // Fetch latest products
       const products = await fetchProductsFromShopify();
 
+      // Build FAQ section from JSON
+      const faqText = storeInfo.faqs
+        .map((faq) => `Q: ${faq.question}\nA: ${faq.answer}`)
+        .join("\n");
+
       // -------------------------------
-      // Build messages array for ChatGPT
+      // SYSTEM PROMPT: Train Organic GPT
       // -------------------------------
+      const systemMessage = `
+        You are Organic GPT, the AI shopping assistant for Matihaat.com.
+        Always be polite, friendly, and conversational.
+
+        Brand: ${storeInfo.brand}
+        About: ${storeInfo.about}
+        Mission: ${storeInfo.mission}
+        Shipping Info: ${storeInfo.shipping}
+        Payment Methods: ${storeInfo.payment_methods}
+        Return Policy: ${storeInfo.return_policy}
+        Contact: ${storeInfo.contact}
+
+        FAQs:
+        ${faqText}
+
+        Available Products:
+        ${products
+          .map((p) => `- ${p.title}: $${p.price} (View: ${p.url})`)
+          .join("\n")}
+
+        If you're unsure about something, politely suggest browsing the store.
+      `;
+
+      // Prepare messages for OpenAI
       const messages = [
-        {
-          role: "system",
-          content: `You are Organic GPT, the AI assistant for Matihaat.com. 
-Always be friendly, helpful, and conversational. 
-If users ask about products, here are some you can mention:\n\n${products
-            .map((p) => `- ${p.title}: $${p.price} (View: ${p.url})`)
-            .join("\n")}\n\nIf unsure, suggest browsing the store.`,
-        },
-        ...conversation, // optional previous conversation
+        { role: "system", content: systemMessage },
+        ...conversation,
         { role: "user", content: message },
       ];
 
@@ -106,10 +128,13 @@ If users ask about products, here are some you can mention:\n\n${products
       });
 
       const data = await response.json();
-      //console.log(data);
-      
-      const reply = data.choices?.[0]?.message?.content || "Sorry, I don’t know.";
 
+      // Extract reply
+      const reply =
+        data.choices?.[0]?.message?.content ||
+        "Sorry, I couldn't find an answer. Please check our store.";
+
+      // Send reply to frontend
       return res.status(200).json({ reply });
     } catch (err) {
       console.error("Proxy error:", err);
@@ -117,5 +142,8 @@ If users ask about products, here are some you can mention:\n\n${products
     }
   }
 
+  // -------------------------------
+  // Method Not Allowed
+  // -------------------------------
   return res.status(405).json({ error: "Method not allowed" });
 }

@@ -1,0 +1,14 @@
+{
+  "brand": "Matihaat.com",
+  "about": "Matihaat.com is an organic marketplace that connects customers with high-quality natural and eco-friendly products.",
+  "mission": "To promote healthy living by offering 100% organic products sourced directly from trusted farmers and producers.",
+  "shipping": "We deliver orders within 3-5 business days anywhere in India.",
+  "return_policy": "Returns are accepted within 7 days of delivery if the product is unopened and unused.",
+  "contact": "For any assistance, you can reach us at support@matihaat.com or call +880123456789.",
+  "faqs": [
+    {
+      "question": "Do you sell only organic products?",
+      "answer": "Yes, we specialize in 100% organic and eco-friendly products from verified suppliers."
+    }
+  ]
+}
